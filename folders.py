@@ -9,7 +9,8 @@ import seedir as sd
 
 def mask(x):
     if x.is_dir() and ("Student Work" in str(x)):
-        # print(len(x.parts), str(x))
+        if "Enrichment" in str(x) or "Club" in str(x) :
+            return False
         if len(x.parts) > 5 :
             if "Submitted files" in str(x):
                 if len(x.parts) > 8:
@@ -27,4 +28,9 @@ def mask(x):
 
 
 path = Path.joinpath(Path.home(), "UTC Sheffield")
-sd.seedir(path, depthlimit=5, mask=mask)
+
+tree = sd.seedir(path, depthlimit=5, mask=mask, printout=False)
+
+#print(tree)
+g = sd.fakedir_fromstring(tree)
+g.seedir()
