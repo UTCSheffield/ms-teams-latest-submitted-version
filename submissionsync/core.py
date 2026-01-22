@@ -1,6 +1,13 @@
 from pathlib import Path
 import seedir as sd
+import win32com.client
 
+shell = None
+try:
+    shell = win32com.client.Dispatch("WScript.Shell")
+except Exception:
+    print("  ✗ pywin32 not installed; shortcuts will not be created")
+    exit()
 
 def mask(x):
     if x.is_dir() and ("Student Work" in str(x)):

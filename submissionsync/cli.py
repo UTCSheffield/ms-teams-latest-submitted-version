@@ -36,6 +36,11 @@ def main():
         help='Force recreation of all shortcuts'
     )
     parser.add_argument(
+        '--verbose',
+        action='store_true',
+        help='Print verbose debug information'
+    )
+    parser.add_argument(
         '--version',
         action='version',
         version='%(prog)s 0.1.0'
@@ -51,12 +56,15 @@ def main():
     print("Creating shortcuts structure...")
     print("=" * 50 + "\n")
 
+    if args.verbose:
+        print("Verbose mode enabled: printing debug information.\n")
+
     start_time = time.perf_counter()
     try:
         create_symlink_structure(
             source_path,
             output_path,
-            debug=args.debug,
+            debug=args.debug or args.verbose,
             show_tree=args.show_tree,
             force=args.force
         )
