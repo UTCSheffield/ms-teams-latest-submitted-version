@@ -1,6 +1,7 @@
 from pathlib import Path
 import seedir as sd
 import win32com.client
+from .shortcuts import create_shortcut
 
 shell = None
 try:
@@ -60,7 +61,6 @@ def iter_latest_versions(base_path, cutoff_mtime=None, dbg=lambda *args, **kwarg
 
 def create_symlink_structure(base_path, output_path, debug: bool = False, show_tree: bool = False, force: bool = False):
     """Create a directory structure with shortcuts to latest submitted versions."""
-    from .shortcuts import create_shortcut
     
     output_path = Path(output_path)
     output_path.mkdir(parents=True, exist_ok=True)
