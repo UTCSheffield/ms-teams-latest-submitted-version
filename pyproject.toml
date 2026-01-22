@@ -5,12 +5,12 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "submissionsync"
 version = "0.1.0"
-description = "Create shortcuts to latest submitted assignment versions"
+description = "Create shortcuts to latest submitted MS teams assignment versions"
 readme = "README.md"
 requires-python = ">=3.8"
 license = {text = "MIT"}
 authors = [
-    {name = "Your Name", email = "your.email@example.com"}
+    {name = "Martyn Eggleton", email = "meggleton@utcsheffield.org.uk"}
 ]
 keywords = ["submissions", "shortcuts", "assignments", "windows"]
 dependencies = [
