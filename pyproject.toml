@@ -15,6 +15,7 @@ authors = [
 keywords = ["submissions", "shortcuts", "assignments", "windows"]
 dependencies = [
     "seedir>=0.4.0",
+    "pywin32>=302"
 ]
 
 [project.optional-dependencies]
