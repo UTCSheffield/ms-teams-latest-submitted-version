@@ -18,16 +18,8 @@ Create shortcuts to the latest submitted assignment versions from a hierarchical
 
 ## Installation
 
-### Basic Installation
-
 ```bash
 pip install submissionsync
-```
-
-### With Windows Shortcut Support
-
-```bash
-pip install submissionsync[win32]
 ```
 
 ## Quick Start
@@ -91,24 +83,8 @@ submissionsync /source/path /output/path --debug --force
 
 Use `submissionsync` as a Python library:
 
-```python
-from submissionsync import create_symlink_structure
-from pathlib import Path
-
-source = Path.home() / "UTC Sheffield"
-output = Path.home() / "shortcuts"
-
-# Basic usage
-create_symlink_structure(source, output)
-
-# With debug output
-create_symlink_structure(source, output, debug=True)
-
-# Force rebuild
-create_symlink_structure(source, output, force=True, debug=True)
-
-# Show directory tree
-create_symlink_structure(source, output, show_tree=True)
+```bash
+python -m submissionsync
 ```
 
 ### Available Functions
