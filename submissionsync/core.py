@@ -1,8 +1,14 @@
-from pathlib import Path, WindowsPath
+from pathlib import Path
 import seedir as sd
-import os
 import win32com.client
-import time
+from .shortcuts import create_shortcut
+
+shell = None
+try:
+    shell = win32com.client.Dispatch("WScript.Shell")
+except Exception:
+    print("  ✗ pywin32 not installed; shortcuts will not be created")
+    exit()
 
 def mask(x):
     if x.is_dir() and ("Student Work" in str(x)):
@@ -11,7 +17,7 @@ def mask(x):
         if len(x.parts) > 5:
             if "Submitted files" in str(x):
                 if len(x.parts) > 8:
-                    if "Version" in str(x):  # x.parts[-1]
+                    if "Version" in str(x):
                         version_num = int(x.parts[-1].split(" ")[1]) + 1
                         next_folder = (x.parents[0] /
                                        ("Version " + str(version_num)))
@@ -55,6 +61,7 @@ def iter_latest_versions(base_path, cutoff_mtime=None, dbg=lambda *args, **kwarg
 
 def create_symlink_structure(base_path, output_path, debug: bool = False, show_tree: bool = False, force: bool = False):
     """Create a directory structure with shortcuts to latest submitted versions."""
+    
     output_path = Path(output_path)
     output_path.mkdir(parents=True, exist_ok=True)
 
@@ -68,9 +75,6 @@ def create_symlink_structure(base_path, output_path, debug: bool = False, show_t
     dbg(f"Scanning for folders in: {base_path}")
     dbg(f"Output directory: {output_path}\n")
     dbg(f"Force rebuild: {force}")
-
-    # Initialize Windows Shell for creating shortcuts
-    shell = win32com.client.Dispatch("WScript.Shell")
 
     # Per-course mtime cache: {course_name: (src_latest, out_latest)}
     course_mtime_cache = {}
@@ -185,21 +189,3 @@ def create_symlink_structure(base_path, output_path, debug: bool = False, show_t
             dbg(f"  ✗ No 'Version' in last part")
 
     dbg(f"\nProcessed latest version folders: {processed}")
-
-
-path = Path.joinpath(Path.home(), "UTC Sheffield")
-
-output_path = Path.joinpath(WindowsPath("P:\\Documents"), "Student Work - Latest Submissions")
-
-print("\n" + "=" * 50)
-print("Creating shortcuts structure...")
-print("=" * 50 + "\n")
-
-start_time = time.perf_counter()
-create_symlink_structure(path, output_path, debug=False, show_tree=False, force=False)
-elapsed = time.perf_counter() - start_time
-
-print(f"\nShortcuts structure created at: {output_path}")
-print("\nYou can now browse the organized structure at:")
-print(f"  {output_path}")
-print(f"\nCompleted in {elapsed:.2f} seconds.")
