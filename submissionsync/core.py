@@ -1,4 +1,5 @@
 from pathlib import Path
+import re
 import seedir as sd
 import win32com.client
 from .shortcuts import create_shortcut
@@ -124,8 +125,13 @@ def create_symlink_structure(base_path, output_path, debug: bool = False, show_t
                 
                 # Get assignment name (between student name and Version folder)
                 assignment_parts = relative_parts[submitted_idx + 2:-1]  # Exclude the Version folder
-                assignment_name = " - ".join(assignment_parts) if assignment_parts else "General"
                 
+                assignment_name1 = " - ".join(assignment_parts) if assignment_parts else "General"
+                assignment_names = re.split(r"[\\-\\_]", assignment_name1)
+                if len(assignment_names):
+                    assignment_name = assignment_names[0].strip(" ")
+                else:
+                    assignment_name = assignment_name1
                 version_num = folder.parts[-1]
                 
                 dbg(f"  Course: {course_name}")
