@@ -127,11 +127,15 @@ def create_symlink_structure(base_path, output_path, debug: bool = False, show_t
                 assignment_parts = relative_parts[submitted_idx + 2:-1]  # Exclude the Version folder
                 
                 assignment_name1 = " - ".join(assignment_parts) if assignment_parts else "General"
-                assignment_names = re.split(r"[\\-\\_]", assignment_name1)
-                if len(assignment_names):
+                assignment_names = re.split(r"[\-\\_]", assignment_name1)
+                if len(assignment_names)>1:
                     assignment_name = assignment_names[0].strip(" ")
                 else:
+                    # print(f"did not match")
                     assignment_name = assignment_name1
+
+                if "CyberEPQ" in assignment_name:
+                    print(f"assignment_name: {assignment_name}")  #, assignment_parts: {assignment_parts}, assignment_names: {assignment_names}")  
                 version_num = folder.parts[-1]
                 
                 dbg(f"  Course: {course_name}")

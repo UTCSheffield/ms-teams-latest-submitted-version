@@ -18,7 +18,7 @@ def main():
     parser.add_argument(
         'output',
         nargs='?',
-        help='Output directory for shortcuts (default: P:/Documents/Student Work - Latest Submissions)'
+        help='Output directory for shortcuts (default: ~/OneDrive - UTC Sheffield/Student Work - Latest Submissions)'
     )
     parser.add_argument(
         '--debug',
@@ -50,7 +50,10 @@ def main():
 
     # Set defaults
     source_path = Path(args.source) if args.source else Path.home() / "UTC Sheffield"
-    output_path = Path(args.output) if args.output else WindowsPath("P:\\Documents") / "Student Work - Latest Submissions"
+    # output_path = Path(args.output) if args.output else WindowsPath("P:\\Documents") / "Student Work - Latest Submissions"
+    output_path = Path(args.output) if args.output else Path.home() / "OneDrive - UTC Sheffield" / "Student Work - Latest Submissions"
+
+
 
     print("\n" + "=" * 50)
     print("Creating shortcuts structure...")
