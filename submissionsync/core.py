@@ -3,6 +3,7 @@ import re
 import seedir as sd
 import win32com.client
 from .shortcuts import create_shortcut
+import os
 
 shell = None
 try:
@@ -81,6 +82,9 @@ def create_symlink_structure(base_path, output_path, debug: bool = False, show_t
     course_mtime_cache = {}
 
     processed = 0
+    user_home = Path(os.environ.get("USERPROFILE", str(Path.home())))
+    user_home_str = str(user_home)
+
     for folder in iter_latest_versions(base_path, cutoff_mtime=None, dbg=dbg):
         processed += 1
         dbg(f"\nProcessing: {folder}")
@@ -134,7 +138,7 @@ def create_symlink_structure(base_path, output_path, debug: bool = False, show_t
                     # print(f"did not match")
                     assignment_name = assignment_name1
 
-                if "CyberEPQ" in assignment_name:
+                if "CyberEPQ" in assignment_name and debug:
                     print(f"assignment_name: {assignment_name}")  #, assignment_parts: {assignment_parts}, assignment_names: {assignment_names}")  
                 version_num = folder.parts[-1]
                 
@@ -165,6 +169,33 @@ def create_symlink_structure(base_path, output_path, debug: bool = False, show_t
 
                 shortcut_path.parent.mkdir(parents=True, exist_ok=True)
 
+                # Compute shortcut target using %USERPROFILE% if possible
+                try:
+                    folder_path = Path(folder)
+                    folder_str = str(folder_path)
+                    if folder_str.startswith(user_home_str):
+                        rel_path = folder_str[len(user_home_str):].lstrip("\\/")
+                        shortcut_target = f"%USERPROFILE%\\{rel_path}"
+                        dbg(f"  Using env-var shortcut target: {shortcut_target}")
+                    else:
+                        shortcut_target = folder_str
+                        dbg(f"  Using absolute shortcut target: {shortcut_target}")
+                    
+                    # Compute working directory ("Start in") using %USERPROFILE% if possible
+                    working_dir_path = folder_path.parent
+                    working_dir_str = str(working_dir_path)
+                    if working_dir_str.startswith(user_home_str):
+                        rel_working = working_dir_str[len(user_home_str):].lstrip("\\/")
+                        shortcut_working_dir = f"%USERPROFILE%\\{rel_working}"
+                        dbg(f"  Using env-var working directory: {shortcut_working_dir}")
+                    else:
+                        shortcut_working_dir = working_dir_str
+                        dbg(f"  Using absolute working directory: {shortcut_working_dir}")
+                except Exception as e:
+                    shortcut_target = str(folder)
+                    shortcut_working_dir = str(folder.parent)
+                    dbg(f"  Error computing shortcut target/working dir: {e}")
+
                 # If force is True, always recreate; otherwise, skip if up to date
                 if shortcut_path.exists() and not force:
                     try:
@@ -183,8 +214,8 @@ def create_symlink_structure(base_path, output_path, debug: bool = False, show_t
 
                 try:
                     shortcut = shell.CreateShortCut(str(shortcut_path))
-                    shortcut.Targetpath = str(folder)
-                    shortcut.WorkingDirectory = str(folder.parent)
+                    shortcut.Targetpath = shortcut_target
+                    shortcut.WorkingDirectory = shortcut_working_dir
                     shortcut.save()
                     dbg(f"  ✓ Shortcut created/updated (points to {version_num})")
                     if not shortcut_path.exists():
